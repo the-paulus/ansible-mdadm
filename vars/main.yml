@@ -1,0 +1,10 @@
+---
+_mdadm_config:
+  Debian: "/etc/mdadm/mdadm.conf"
+  Gentoo: "/etc/mdadm.conf"
+  RedHat: "/etc/mdadm.conf"
+
+_mdadm_initramfs_command:
+  Debian: "update-initramfs -u"
+  Gentoo: "genkernel --domdadm --install initramfs"
+  RedHat: "dracut --force"

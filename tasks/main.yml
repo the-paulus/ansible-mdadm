@@ -1,0 +1,22 @@
+---
+- name: "Include tasks for {{ ansible_os_family }}"
+  include_tasks: "{{ ansible_os_family }}/main.yml"
+
+- name: "Install mdadm"
+  package:
+    name: mdadm
+    state: latest
+
+- name: "Get Devices for Arrays"
+  shell: "mdadm --create {{ item.key }} --level{{ item.value['level'] }} --raid-devices={{ item.value['raid-devices'] }} {{ item.value['options'] }} {{ item.value['devices'] | join(' ') }}"
+  with_dict: "{{ mdadm_arrays }}"
+
+- name: "Save mdadm configuration"
+  shell: "mdadm --detail --scan >> {{ _mdadm_config[ansible_os_family] }}"
+
+- name: "Mount /boot"
+  shell: "mount /boot"
+  ignore_errors: yes
+
+- name: "Update initramfs"
+  shell: "{{ _mdadm_initramfs_command[ansible_os_family] }}"
